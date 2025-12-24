@@ -1,0 +1,718 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IPR-1: Interactive Physical Reasoner</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Google+Sans:wght@400;500;700&family=Google+Sans+Text:wght@400;500&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="css/style.css">
+</head>
+
+<body>
+    <div class="container">
+
+        <!-- 1. Teaser, Abstract & Demo Video -->
+        <header class="hero" id="top">
+            <h1 class="title">IPR-1: Interactive Physical Reasoner</h1>
+            <p class="subtitle">Learning physical and causal reasoning through interaction in 1,000+ worlds</p>
+
+            <div class="authors">
+                <span class="author">Mingyu Zhang<sup>1,2,*</sup></span>
+                <span class="author">Lifeng Zhuo<sup>1,*</sup></span>
+                <span class="author">Tianxi Tan<sup>1,2</sup></span>
+                <span class="author">Guocan Xie<sup>1</sup></span>
+                <span class="author">Xian Nie<sup>1</sup></span>
+                <span class="author">Yan Li<sup>1</sup></span>
+                <br class="author-break">
+                <span class="author">Renjie Zhao<sup>1,**</sup></span>
+                <span class="author">Zizhu He<sup>1</sup></span>
+                <span class="author">Ziyu Wang<sup>1</sup></span>
+                <span class="author">Jiting Cai<sup>1,3,**</sup></span>
+                <span class="author">Yong-Lu Li<sup>1,2,&dagger;</sup></span>
+            </div>
+
+            <div class="affiliations">
+                <div><sup>1</sup> Shanghai Jiao Tong University</div>
+                <div><sup>2</sup> Shanghai Innovation Institute</div>
+                <div><sup>3</sup> Carnegie Mellon University</div>
+                <div class="emails">
+                    <a href="mailto:sjtuzmy2003@sjtu.edu.cn">sjtuzmy2003@sjtu.edu.cn</a>
+                    &nbsp;&nbsp;
+                    <a href="mailto:yonglu_li@sjtu.edu.cn">yonglu_li@sjtu.edu.cn</a>
+                </div>
+            </div>
+
+            <div class="author-notes">
+                <p><sup>*</sup> Equal contribution. &nbsp; <sup>&dagger;</sup> Corresponding author. &nbsp;
+                    <sup>**</sup> Conducted during an internship at Shanghai Jiao Tong University.
+                </p>
+            </div>
+
+            <div class="links">
+                <a href="https://arxiv.org/abs/2511.15407" class="link-btn" target="_blank">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                        <polyline points="14 2 14 8 20 8"></polyline>
+                    </svg>
+                    Paper
+                </a>
+                <a href="https://github.com/mybearyZhang/ipr-1/" class="link-btn">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path
+                            d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22">
+                        </path>
+                    </svg>
+                    Code
+                </a>
+            </div>
+        </header>
+
+        <!-- Main Demo Video -->
+        <section class="demo-section">
+            <!-- <h2>Main Demo</h2> -->
+            <div class="video-wrapper">
+                <!-- Replace VIDEO_ID with your YouTube video id -->
+                <div style="position:relative;padding-bottom:56.25%;height:0;overflow:hidden;">
+                    <iframe src="https://www.youtube.com/embed/VIDEO_ID" title="IPR-1 Demo" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen style="position:absolute;top:0;left:0;width:100%;height:100%;"></iframe>
+                </div>
+            </div>
+            <p class="caption">IPR-1 demonstrates robust physical reasoning across diverse environments — <a href="https://www.youtube.com/watch?v=VIDEO_ID" target="_blank" rel="noopener">Watch on YouTube</a></p>
+        </section>
+
+
+
+        <!-- Abstract -->
+        <section class="abstract" id="abstract-section">
+            <h2 onclick="toggleAbstract()">abstract</h2>
+            <div class="abstract-content">
+                <p>
+                    Humans learn by observing, interacting with environments, and internalizing physics and causality.
+                    Here, we aim to ask whether an agent can similarly acquire human-like reasoning from interaction and
+                    keep improving with more experience. To study this, we introduce a Game-to-Unseen (G2U) benchmark of
+                    1,000+ heterogeneous games that exhibit significant visual domain gaps. Existing approaches,
+                    including VLMs and world models, struggle to capture underlying physics and causality since they are
+                    not focused on core mechanisms and overfit to visual details. VLM/VLA agents reason but lack
+                    look-ahead in interactive settings, while world models imagine but imitate visual patterns rather
+                    than analyze physics and causality. We therefore propose IPR (Interactive Physical Reasoner), using
+                    world-model rollouts to score and reinforce a VLM's policy, and introduce PhysCode, a
+                    physics-centric action code aligning semantic intent with dynamics to provide a shared action space
+                    for prediction and reasoning. Pretrained on 1,000+ games, our IPR performs robustly on levels from
+                    primitive intuition to goal-driven reasoning, and even surpasses GPT-5 overall. We find that
+                    performance improves with more training games and interaction steps, and that the model also
+                    zero-shot transfers to unseen games. These results support physics-centric interaction as a path to
+                    steadily improving physical reasoning.
+                </p>
+            </div>
+        </section>
+
+
+        <!-- Teaser Image -->
+        <section class="teaser-section">
+            <div class="teaser-wrapper">
+                <img src="assets/images/teaser.png" alt="Teaser image" class="teaser-img">
+                <p class="teaser-caption">IPR-1 interacting with diverse physical environments.</p>
+            </div>
+        </section>
+
+        <!-- Main body skeleton: user can paste full text into these sections -->
+        <section id="main-content" class="main-content">
+            <!-- <h2>Full Paper</h2> -->
+
+            <section id="introduction" class="method-section">
+                <h2>Introduction</h2>
+                <p class="section-intro">
+                    Humans internalize physical laws and causality not just by observing, but by actively interacting
+                    with the environment. Inspired by this cognitive process, my recent work explores whether artificial
+                    agents can acquire similar human-like physical reasoning capabilities through interactive
+                    experience. While current Large Vision Models and World Models excel at static understanding, they
+                    often struggle to capture the underlying causal mechanisms required for robust, forward-looking
+                    physical interaction in dynamic worlds.
+                </p>
+
+                <p class="section-intro">
+                    To bridge this gap, we introduced <strong>IPR-1 (Interactive Physical Reasoner)</strong>, a novel
+                    paradigm that fundamentally enhances how agents ground their understanding in the physical world. By
+                    integrating a generative <strong>World Model</strong> with a <strong>Vision-Language Model
+                        (VLM)</strong>, our approach enables the agent to perform <strong>prediction-reinforced
+                        reasoning</strong>. This mechanism allows the system to simulate potential future outcomes and
+                    refine its strategies through active interaction, effectively transforming static semantic knowledge
+                    into dynamic, actionable physical intelligence.
+                </p>
+
+                <p class="section-intro">
+                    We validated this approach on <strong>G2U (Game-to-Unseen)</strong>, a massive benchmark we
+                    constructed comprising over 1,000 heterogeneous game environments. Experiments demonstrate that
+                    IPR-1 achieves robust performance across three capability hierarchies: Survival, Curiosity, and
+                    Utility. Notably, the model exhibits exceptional <strong>zero-shot transfer</strong> abilities in
+                    completely unseen environments, outperforming state-of-the-art models like GPT-5 in comprehensive
+                    physical reasoning benchmarks.
+                </p>
+            </section>
+
+
+            <!-- 2. Method Pipeline -->
+            <section class="method-section">
+                <h2>Method</h2>
+                <p class="section-intro">
+                    We propose IPR (Interactive Physical Reasoner), which combines a VLM-based policy with world-model
+                    rollouts for look-ahead planning. Our approach introduces PhysCode, a physics-centric action
+                    representation that bridges semantic reasoning and physical dynamics, enabling the model to learn
+                    from interaction and steadily improve its physical reasoning capabilities.
+                </p>
+
+                <div class="pipeline-diagram">
+                    <img src="assets/images/pipeline.png" alt="Method Pipeline" class="pipeline-img">
+                </div>
+
+                <div class="method-details">
+                    <div class="method-card">
+                        <h3>Stage 1: PhysCode Pre-training</h3>
+                        <div class="method-body">
+                            <ul>
+                                <li>Input: video clips + optical flow + action semantics as supervision.</li>
+                                <li>Train a VQ-style latent action model to learn discrete action codes (PhysCode).</li>
+                                <li>PhysCode captures core dynamics and serves as a shared action space.</li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="method-card">
+                        <h3>Stage 2: Latent-conditioned World Model</h3>
+                        <div class="method-body">
+                            <ul>
+                                <li>Condition on current features plus PhysCode sequences.</li>
+                                <li>Predict future features and rewards under latent actions.</li>
+                                <li>Enable fast rollouts for lookahead scoring and planning.</li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="method-card">
+                        <h3>Stage 3: Prediction-reinforced Reasoning</h3>
+                        <div class="method-body">
+                            <ul>
+                                <li>The VLM proposes candidate PhysCode sequences from scene understanding.</li>
+                                <li>The world model rolls out candidates in imagination and scores them (reward/value).
+                                </li>
+                                <li>Use the scores to pick actions and reinforce the VLM policy, closing the
+                                    predict–reason
+                                    loop.</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 3. Leaderboard -->
+            <section class="leaderboard-section">
+                <h2>Performance Leaderboard</h2>
+                <p class="section-intro">
+                    Evaluated on our Game-to-Unseen (G2U) benchmark with 1,000+ heterogeneous games, IPR demonstrates
+                    strong performance across three reasoning dimensions: Survival (basic physical intuition), Curiosity
+                    (exploration and discovery), and Utility (goal-driven reasoning). Results show that performance
+                    improves with more training games and interaction steps.
+                </p>
+
+
+                <div class="chart-wrapper chart-wrapper--horizontal">
+                    <div class="chart-legend" aria-label="Score legend">
+                        <span class="legend-item">
+                            <span class="legend-swatch survival"></span>
+                            🍖 Survival
+                        </span>
+                        <span class="legend-item">
+                            <span class="legend-swatch curiosity"></span>
+                            🧭 Curiosity
+                        </span>
+                        <span class="legend-item">
+                            <span class="legend-swatch utility"></span>
+                            👑 Utility
+                        </span>
+                    </div>
+                    <div class="chart-canvas chart-canvas-horizontal">
+                        <div id="leaderboard-chart-horizontal" class="leaderboard-chart-horizontal" role="img"
+                            aria-live="polite"
+                            aria-label="Horizontal leaderboard bar chart showing benchmark scores per method">
+                            <!-- ECharts chart injected via script -->
+                        </div>
+                    </div>
+                    <!-- <p class="chart-note">IPR Ranking: Survival 2/28 &middot; Curiosity 5/28 &middot; Utility 7/28
+	                        &mdash; dashed guides show Random (1) and Human (100) baselines.</p> -->
+                </div>
+            </section>
+
+            <!-- Shocking Cases -->
+            <!-- <section class="shocking-section" id="shocking-cases">
+                <h2>Highlight Times</h2>
+                <p class="section-intro">
+                    In some games, IPR exhibits surprising skills and high-level gameplay. Below are a
+                    few representative clips.
+                </p>
+
+                <div class="shocking-grid" aria-label="Shocking cases GIF gallery">
+                    <figure class="gif-card shocking-card">
+                        <div class="gif-media">
+                            <img src="assets/shocking/3NinjasKickBack-Genesis__IPR_6__root__ep1__f190-365__20251222_151749.gif"
+                                alt="IPR playing 3 Ninjas Kick Back (Genesis)" loading="lazy">
+                        </div>
+                        <figcaption>
+                            <div class="shocking-game">3 Ninjas Kick Back (Genesis)</div>
+                            <div class="shocking-desc">TODO: Describe the model behavior here.</div>
+                        </figcaption>
+                    </figure>
+
+                    <figure class="gif-card shocking-card">
+                        <div class="gif-media">
+                            <img src="assets/shocking/DevilishTheNextPossession-Genesis__IPR_6__root__ep1__f180-330__20251222_152936.gif"
+                                alt="IPR playing Devilish: The Next Possession (Genesis)" loading="lazy">
+                        </div>
+                        <figcaption>
+                            <div class="shocking-game">Devilish: The Next Possession (Genesis)</div>
+                            <div class="shocking-desc">TODO: Describe the model behavior here.</div>
+                        </figcaption>
+                    </figure>
+
+                    <figure class="gif-card shocking-card">
+                        <div class="gif-media">
+                            <img src="assets/shocking/DimensionForce-Snes__IPR_6__root__ep1__f330-540__20251222_152227.gif"
+                                alt="IPR playing Dimension Force (SNES)" loading="lazy">
+                        </div>
+                        <figcaption>
+                            <div class="shocking-game">Dimension Force (SNES)</div>
+                            <div class="shocking-desc">TODO: Describe the model behavior here.</div>
+                        </figcaption>
+                    </figure>
+
+                    <figure class="gif-card shocking-card">
+                        <div class="gif-media">
+                            <img src="assets/shocking/GradiusII-Nes__IPR_6__root__ep1__f1-240__20251222_151502.gif"
+                                alt="IPR playing Gradius II (NES)" loading="lazy">
+                        </div>
+                        <figcaption>
+                            <div class="shocking-game">Gradius II (NES)</div>
+                            <div class="shocking-desc">TODO: Describe the model behavior here.</div>
+                        </figcaption>
+                    </figure>
+
+                    <figure class="gif-card shocking-card">
+                        <div class="gif-media">
+                            <img src="assets/shocking/Satellite7-Sms__IPR_6__root__ep1__f600-720__20251222_152615.gif"
+                                alt="IPR playing Satellite 7 (SMS)" loading="lazy">
+                        </div>
+                        <figcaption>
+                            <div class="shocking-game">Satellite 7 (SMS)</div>
+                            <div class="shocking-desc">TODO: Describe the model behavior here.</div>
+                        </figcaption>
+                    </figure>
+
+                    <figure class="gif-card shocking-card">
+                        <div class="gif-media">
+                            <img src="assets/shocking/Seicross-Nes__IPR_6__root__ep1__f120-210__20251222_151950.gif"
+                                alt="IPR playing Seicross (NES)" loading="lazy">
+                        </div>
+                        <figcaption>
+                            <div class="shocking-game">Seicross (NES)</div>
+                            <div class="shocking-desc">TODO: Describe the model behavior here.</div>
+                        </figcaption>
+                    </figure>
+
+                    <figure class="gif-card shocking-card">
+                        <div class="gif-media">
+                            <img src="assets/shocking/ThunderSpirits-Snes__IPR_6__root__ep1__f180-420__20251222_152511.gif"
+                                alt="IPR playing Thunder Spirits (SNES)" loading="lazy">
+                        </div>
+                        <figcaption>
+                            <div class="shocking-game">Thunder Spirits (SNES)</div>
+                            <div class="shocking-desc">TODO: Describe the model behavior here.</div>
+                        </figcaption>
+                    </figure>
+
+                    <figure class="gif-card shocking-card">
+                        <div class="gif-media">
+                            <img src="assets/shocking/Zanac-Nes__IPR_6__root__ep2__f60-150__20251222_152726.gif"
+                                alt="IPR playing Zanac (NES)" loading="lazy">
+                        </div>
+                        <figcaption>
+                            <div class="shocking-game">Zanac (NES)</div>
+                            <div class="shocking-desc">TODO: Describe the model behavior here.</div>
+                        </figcaption>
+                    </figure>
+                </div>
+            </section> -->
+
+            <!-- Model GIF gallery -->
+            <!-- <section class="model-gallery-section" id="model-gallery">
+                <h2>Model Interaction Gallery</h2>
+                <p class="section-intro">
+                    Compare IPR against baseline methods including VLMs (GPT-4o, GPT-5), world models (DreamerV3,
+                    Genie), and imitation learning approaches. IPR demonstrates robust physical reasoning and zero-shot
+                    transfer to unseen games, outperforming baselines on curiosity-driven tasks.
+                </p>
+
+                <div class="gallery-stage" aria-label="Gallery pagination">
+                    <button class="model-btn gallery-nav gallery-nav--prev" id="gallery-prev" type="button"
+                        aria-label="Previous page">
+                        <span aria-hidden="true">◀</span>
+                    </button>
+
+                    <div class="gallery-grids">
+                        <div class="gallery-row gallery-row--ipr">
+                            <div class="gallery-row-title">
+                                <span class="gallery-row-badge">IPR</span>
+                            </div>
+                            <div class="gif-grid gif-grid--row" id="model-gif-grid-ipr" aria-live="polite">
+                            </div>
+                        </div>
+
+                        <div class="gallery-vs-divider" aria-hidden="true">
+                            <span>V.S.</span>
+                        </div>
+
+                        <div class="gallery-row">
+                            <div class="gif-grid gif-grid--row" id="model-gif-grid-other" aria-live="polite">
+                            </div>
+                        </div>
+                    </div>
+
+                    <button class="model-btn gallery-nav gallery-nav--next" id="gallery-next" type="button"
+                        aria-label="Next page">
+                        <span aria-hidden="true">▶</span>
+                    </button>
+                </div>
+
+                <div class="gallery-status" id="gallery-status">Loading gallery...</div>
+                <div class="gallery-controls gallery-controls--bottom" id="gallery-controls-bottom">
+                </div>
+
+                <div class="gallery-controls gallery-controls--bottom" id="gallery-controls-bottom">
+                    <span class="gallery-controls-label">Choose a model</span>
+                    <div class="model-button-group" id="model-button-group" role="tablist"
+                        aria-label="Select a model to preview clips">
+                    </div>
+                </div>
+            </section> -->
+
+            <!-- AAA Games GIF comparison -->
+            <!-- <section class="aaa-games">
+                <h2 class="section-title">AAA Game Performance</h2>
+                <p class="section-intro">
+                    Zero-shot transfer results on commercial AAA games (Astroneer, Portal). Our approach demonstrates
+                    the ability to generalize to visually complex, high-fidelity environments without additional
+                    training, showcasing robust physical reasoning and goal-driven behavior in realistic settings.
+                </p>
+
+                <div class="aaa-game-block">
+                    <div class="aaa-game-title">
+                        <h3>Astroneer</h3>
+                        <span class="aaa-game-note">Video comparison by case.</span>
+                    </div>
+
+                    <div class="aaa-case" data-aaa-case>
+                        <div class="aaa-case-header">Case 1</div>
+                        <div class="aaa-grid">
+                            <figure class="aaa-card aaa-card--spotlight">
+                                <div class="aaa-badge">Spotlight</div>
+                                <video class="aaa-video" data-src="assets/aaa/Astroneer_gpt4o.mp4" muted loop autoplay
+                                    playsinline preload="none"></video>
+                                <figcaption>
+                                    <div class="aaa-model">GPT-4o</div>
+                                    <ul class="aaa-points">
+                                        <li class="aaa-point aaa-point--pro">Navigates around obstacles.</li>
+                                        <li class="aaa-point aaa-point--pro">Robust in complex scenarios.</li>
+                                        <li class="aaa-point aaa-point--pro">Reaches the target location successfully.
+                                        </li>
+                                    </ul>
+                                </figcaption>
+                            </figure>
+                            <figure class="aaa-card">
+                                <video class="aaa-video" data-src="assets/aaa/Astroneer_ACT.mp4" muted loop autoplay
+                                    playsinline preload="none"></video>
+                                <figcaption>
+                                    <div class="aaa-model">ACT (IL)</div>
+                                    <ul class="aaa-points">
+                                        <li class="aaa-point aaa-point--con">Lowers the camera view during movement.
+                                        </li>
+                                        <li class="aaa-point aaa-point--con">Model cannot see crucial scene context.
+                                        </li>
+                                    </ul>
+                                </figcaption>
+                            </figure>
+                            <figure class="aaa-card">
+                                <video class="aaa-video" data-src="assets/aaa/Astroneer_finetune.mp4" muted loop
+                                    autoplay playsinline preload="none"></video>
+                                <figcaption>
+                                    <div class="aaa-model">Qwen3-VL-8B (finetune)</div>
+                                    <ul class="aaa-points">
+                                        <li class="aaa-point aaa-point--con">Cannot determine the correct
+                                            direction.</li>
+                                    </ul>
+                                </figcaption>
+                            </figure>
+                            <figure class="aaa-card">
+                                <video class="aaa-video" data-src="assets/aaa/Astroneer_random.mp4" muted loop autoplay
+                                    playsinline preload="none"></video>
+                                <figcaption>
+                                    <div class="aaa-model">Random</div>
+                                    <ul class="aaa-points">
+                                        <li class="aaa-point aaa-point--con">Cannot move stably toward a fixed
+                                            direction.</li>
+                                    </ul>
+                                </figcaption>
+                            </figure>
+                        </div>
+                        <div class="aaa-pager" data-aaa-pager>
+                            <button class="model-btn aaa-nav-btn" type="button" data-aaa-prev
+                                aria-label="Previous clips">
+                                <span aria-hidden="true">◀</span>
+                            </button>
+                            <span class="aaa-pager-status" data-aaa-status>1 / 1</span>
+                            <button class="model-btn aaa-nav-btn" type="button" data-aaa-next aria-label="Next clips">
+                                <span aria-hidden="true">▶</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="aaa-game-block">
+                    <div class="aaa-game-title">
+                        <h3>Portal</h3>
+                        <span class="aaa-game-note">Video comparison by case.</span>
+                    </div>
+
+                    <div class="aaa-case" data-aaa-case>
+                        <div class="aaa-case-header">Case 1</div>
+                        <div class="aaa-grid">
+                            <figure class="aaa-card aaa-card--spotlight">
+                                <div class="aaa-badge">Spotlight</div>
+                                <video class="aaa-video" data-src="assets/aaa/Portal_RL.mp4" muted loop autoplay
+                                    playsinline preload="none"></video>
+                                <figcaption>
+                                    <div class="aaa-model">PPO (RL)</div>
+                                    <ul class="aaa-points">
+                                        <li class="aaa-point aaa-point--pro">Successfully picks up the box.</li>
+                                        <li class="aaa-point aaa-point--pro">Successfully places the box on the button
+                                            to complete
+                                            the task.</li>
+                                    </ul>
+                                </figcaption>
+                            </figure>
+                            <figure class="aaa-card">
+                                <video class="aaa-video" data-src="assets/aaa/Portal_ACT.mp4" muted loop autoplay
+                                    playsinline preload="none"></video>
+                                <figcaption>
+                                    <div class="aaa-model">ACT (IL)</div>
+                                    <ul class="aaa-points">
+                                        <li class="aaa-point aaa-point--pro">Reaches the front of the box reliably.</li>
+                                        <li class="aaa-point aaa-point--con">Fails to pick up the box.</li>
+                                    </ul>
+                                </figcaption>
+                            </figure>
+                            <figure class="aaa-card">
+                                <video class="aaa-video" data-src="assets/aaa/Portal_finetune.mp4" muted loop autoplay
+                                    playsinline preload="none"></video>
+                                <figcaption>
+                                    <div class="aaa-model">Qwen3-VL-8B (finetune)</div>
+                                    <ul class="aaa-points">
+                                        <li class="aaa-point aaa-point--con">Fails to navigate to the correct position
+                                            in front of the box.</li>
+                                    </ul>
+                                </figcaption>
+                            </figure>
+                            <figure class="aaa-card">
+                                <video class="aaa-video" data-src="assets/aaa/Portal_gpt4o.mp4" muted loop autoplay
+                                    playsinline preload="none"></video>
+                                <figcaption>
+                                    <div class="aaa-model">GPT-4o</div>
+                                    <ul class="aaa-points">
+                                        <li class="aaa-point aaa-point--pro">Picks up the box correctly.</li>
+                                        <li class="aaa-point aaa-point--con">Fails to place the box on the button.</li>
+                                    </ul>
+                                </figcaption>
+                            </figure>
+                        </div>
+                        <div class="aaa-pager" data-aaa-pager>
+                            <button class="model-btn aaa-nav-btn" type="button" data-aaa-prev
+                                aria-label="Previous clips">
+                                <span aria-hidden="true">◀</span>
+                            </button>
+                            <span class="aaa-pager-status" data-aaa-status>1 / 1</span>
+                            <button class="model-btn aaa-nav-btn" type="button" data-aaa-next aria-label="Next clips">
+                                <span aria-hidden="true">▶</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </section> -->
+
+            <!-- 4. Interactive Demo -->
+            <section class="interactive-section">
+                <h2>Interactive Demo (Under Development)</h2>
+                <p class="section-intro">
+                    Experience IPR in action with our interactive Super Mario demo. Adjust the gravity parameter to
+                    modify the physical environment and observe how our VLM-based agent adapts its behavior in
+                    real-time, demonstrating robust physical reasoning under changing dynamics.
+                </p>
+
+                    <div class="demo-placeholder">
+                        <div class="deployment-note" style="margin-bottom:12px; padding:10px; border-radius:8px; background:linear-gradient(90deg,#fffaf0,#fff); border:1px solid #ffd9a6; color:#6b4f00; font-size:14px;">
+                            <strong>Model deployment:</strong> Deploying the IPR model to the web — <em>upcoming</em>.
+                            <div style="margin-top:6px;">
+                                You can:
+                                <ul style="margin:6px 0 0 18px;">
+                                    <li>Check the reference videos below for pre-recorded runs.</li>
+                                    <li><strong>Human try:</strong> try the demo manually using the embedded game iframe.</li>
+                                </ul>
+                            </div>
+                        </div>
+                    <div class="demo-controls">
+                        <div class="controls-left">
+                            <div class="control-group">
+                                <label for="gravity-slider">🌏 Gravity Control (0.2 - 2.0):</label>
+                                <input type="range" id="gravity-slider" min="0.2" max="2.0" step="0.1" value="1.0">
+                                <span id="gravity-value">1.0</span>
+                            </div>
+                            <div class="control-group">
+                                <label for="monster-speed-slider">👾 Monster Speed Control (0.2 - 3.0):</label>
+                                <input type="range" id="monster-speed-slider" min="0.2" max="3.0" step="0.1"
+                                    value="1.0">
+                                <span id="monster-speed-value">1.0</span>
+                            </div>
+                        </div>
+                        <div class="controls-right">
+                            <button class="demo-btn" id="reset-game">Reset Game</button>
+                            <button class="demo-btn demo-btn-secondary" id="vlm-toggle">Start VLM</button>
+                        </div>
+                    </div>
+
+                    <div class="demo-canvas">
+                        <div class="mario-frame-wrapper" id="mario-frame-wrapper">
+                            <div class="vlm-indicator" id="vlm-indicator" aria-hidden="true"></div>
+                            <iframe id="mario-game" src="assets/mario/mario.html"
+                                style="width: 100%; height: 600px; border: none; border-radius: 8px;">
+                            </iframe>
+                        </div>
+                    </div>
+
+                    <div class="vlm-status-area" aria-live="polite">
+                        <div class="vlm-statusbar">
+                            <span class="vlm-badge" id="vlm-status">VLM: stopped</span>
+                            <span class="vlm-badge vlm-badge-human is-hidden" id="vlm-human">Human: input</span>
+                            <span class="vlm-badge" id="vlm-conn">Backend: detecting…</span>
+                            <span class="vlm-badge" id="vlm-action">Decision: -</span>
+                        </div>
+                    </div>
+
+                    <!-- Fallback: reference videos (collapsed by default) -->
+                    <div class="lag-video-box"
+                        style="margin-top: 12px; padding: 10px; border: 1px dashed #ccc; border-radius: 8px; background: #fafafa;">
+                        <div
+                            style="display: flex; align-items: center; justify-content: space-between; gap: 8px; flex-wrap: wrap;">
+                            <div style="font-size: 14px; color: #333;">
+                                If the demo feels laggy or unresponsive (e.g., due to backend/network issues), you can
+                                watch the reference videos below (looping playback).
+                            </div>
+                            <button id="lag-video-toggle" class="demo-btn demo-btn-secondary" type="button">Show
+                                reference videos</button>
+                        </div>
+                        <div id="lag-video-panel" class="lag-video-panel">
+                            <div class="lag-video-item">
+                                <div class="lag-video-figure">
+                                    <span class="lag-video-badge">Gravity: 0.2×</span>
+                                    <video class="lag-video" data-src="assets/physics/mario1.mp4" muted loop playsinline
+                                        preload="none"></video>
+                                </div>
+                            </div>
+                            <div class="lag-video-item">
+                                <div class="lag-video-figure">
+                                    <span class="lag-video-badge">Gravity: 0.7×</span>
+                                    <video class="lag-video" data-src="assets/physics/mario3.mp4" muted loop playsinline
+                                        preload="none"></video>
+                                </div>
+                            </div>
+                            <div class="lag-video-item">
+                                <div class="lag-video-figure">
+                                    <span class="lag-video-badge">Gravity: 1.1×</span>
+                                    <video class="lag-video" data-src="assets/physics/mario4.mp4" muted loop playsinline
+                                        preload="none"></video>
+                                </div>
+                            </div>
+                            <div class="lag-video-item">
+                                <div class="lag-video-figure">
+                                    <span class="lag-video-badge">Gravity: 1.4×</span>
+                                    <video class="lag-video" data-src="assets/physics/mario2.mp4" muted loop playsinline
+                                        preload="none"></video>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 5. Robot Transfer (hidden until ready) -->
+            <section class="robot-section">
+                <h2>Generalization to Robotics</h2>
+                <p class="section-intro">
+                    Across different embodiments, the same physical and causal mechanisms apply. IPR picks objects
+                    zero-shot (though with observable motion jitter), while other vision–language models often fail
+                    to pick objects correctly — and in some cases fail to even approach the object reliably.
+                </p>
+                <div class="robot-grid">
+                    <div class="robot-item">
+                        <video controls muted loop>
+                            <source src="assets/robots/ipr.mp4" type="video/mp4">
+                        </video>
+                        <h3>IPR</h3>
+                    </div>
+
+                    <div class="robot-item">
+                        <video controls muted loop>
+                            <source src="assets/robots/gpt.mp4" type="video/mp4">
+                        </video>
+                        <h3>GPT-5.1</h3>
+                    </div>
+
+                    <div class="robot-item">
+                        <video controls muted loop>
+                            <source src="assets/robots/gemini.mp4" type="video/mp4">
+                        </video>
+                        <h3>Gemini 2.5 Pro</h3>
+                    </div>
+
+                    <div class="robot-item">
+                        <video controls muted loop>
+                            <source src="assets/robots/qwen.mp4" type="video/mp4">
+                        </video>
+                        <h3>Qwen3-VL</h3>
+                    </div>
+                </div>
+            </section>
+
+
+            <!-- 6. Citation -->
+            <section class="citation-section">
+                <h2>Citation</h2>
+                <div class="bibtex-wrapper">
+                    <pre><code>@article{zhang2025ipr,
+  title={IPR-1: Interactive Physical Reasoner},
+  author={Zhang, Mingyu and Zhuo, Lifeng and Tan, Tianxi and Xie, Guocan and Nie, Xian and Li, Yan and Zhao, Renjie and He, Zizhu and Wang, Ziyu and Cai, Jiting and others},
+  journal={arXiv preprint arXiv:2511.15407},
+  year={2025}
+}</code></pre>
+                    <button class="copy-btn" id="copy-citation">Copy</button>
+                </div>
+            </section>
+
+            <!-- Footer -->
+            <footer class="footer">
+                <p>&copy; 2025 RHOS lab. All rights reserved.</p>
+            </footer>
+    </div>
+
+    <script src="js/vendor/echarts-5.5.0.min.js"></script>
+    <script src="js/script.js"></script>
+</body>
+
+</html>

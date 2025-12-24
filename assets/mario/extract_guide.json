@@ -1,0 +1,5 @@
+{
+    "mario": {
+        "js_script": " () => {\n  return {\n    gameStatus: window.marioGameStatus || false\n  };\n}"
+    }
+}

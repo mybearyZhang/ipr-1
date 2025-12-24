@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en-us">
+<head>
+    <meta charset="utf-8">
+    <title>Super Mario</title>
+
+    <link href="mario.css" rel="stylesheet">
+    <link href="Fonts/stylesheet.css" rel="stylesheet">
+
+    <script>
+        (function () {
+            let isEmbedded = false;
+            try {
+                isEmbedded = window.self !== window.top;
+            } catch (e) {
+                isEmbedded = true;
+            }
+
+            if (!isEmbedded) return;
+
+            window.__IPR_FORCE_MUTE__ = true;
+            try {
+                if (window.localStorage) {
+                    localStorage.muted = "true";
+                }
+            } catch (e) { }
+        })();
+    </script>
+
+    <script src="data.js"></script>
+    <script src="editor.js"></script>
+    <script src="events.js"></script>
+    <script src="generator.js"></script>
+    <script src="library.js"></script>
+    <script src="load.js"></script>
+    <script src="maps.js"></script>
+    <script src="mario.js"></script>
+    <script src="quadrants.js"></script>
+    <script src="sounds.js"></script>
+    <script src="sprites.js"></script>
+    <script src="things.js"></script>
+    <script src="toned.js"></script>
+    <script src="triggers.js"></script>
+    <script src="upkeep.js"></script>
+    <script src="utility.js"></script>
+    <script src="gamepad.js"></script>
+
+
+</head>
+<body onload="FullScreenMario();">
+
+
+<script>
+    window.captureFrame = function () {
+        try {
+            var canvas = document.querySelector('canvas');
+            if (!canvas || typeof canvas.toDataURL !== 'function') {
+                return null;
+            }
+            return canvas.toDataURL('image/png');
+        } catch (e) {
+            console.error('[mario] captureFrame failed:', e);
+            return null;
+        }
+    };
+
+    window.getMarioState = function () {
+        try {
+            var m = window.mario || null;
+            var d = window.data || null;
+            var mp = typeof window.map !== 'undefined' ? window.map : null;
+
+            var state = {
+                ts: Date.now(),
+                gameon: window.gameon === true,
+                paused: window.paused === true,
+                gravity: typeof window.gravity === 'number' ? window.gravity : null,
+                gravity_change: typeof window.external_gravity_change === 'number' ? window.external_gravity_change : null,
+                mario: m ? {
+                    alive: m.alive !== false && !m.dead && !m.dying,
+                    dead: !!m.dead,
+                    dying: !!m.dying,
+                    left: typeof m.left === 'number' ? m.left : null,
+                    top: typeof m.top === 'number' ? m.top : null,
+                    bottom: typeof m.bottom === 'number' ? m.bottom : null,
+                    xvel: typeof m.xvel === 'number' ? m.xvel : null,
+                    yvel: typeof m.yvel === 'number' ? m.yvel : null,
+                    power: typeof m.power === 'number' ? m.power : null
+                } : null,
+                hud: d ? {
+                    score: d.score ? d.score.amount : null,
+                    coins: d.coins ? d.coins.amount : null,
+                    time: d.time ? d.time.amount : null,
+                    lives: d.lives ? d.lives.amount : null,
+                    world: d.world ? d.world.amount : null
+                } : null,
+                map: mp ? {
+                    gravity: typeof mp.gravity === 'number' ? mp.gravity : null,
+                    underwater: !!mp.underwater,
+                    time: typeof mp.time === 'number' ? mp.time : null
+                } : null
+            };
+
+            state.running = !!(state.mario && state.mario.alive && state.gameon && !state.paused);
+            return state;
+        } catch (e) {
+            return { ts: Date.now(), error: String(e) };
+        }
+    };
+
+    try {
+        if (typeof initRecorder === 'function') {
+            initRecorder();
+        } else {
+            console.warn('[mario] initRecorder not found.');
+        }
+    } catch (e) {
+        console.error('[mario] initRecorder failed:', e);
+    }
+</script>
+</body>
+</html>

@@ -1,0 +1,34 @@
+# assets/
+.vscode/
+
+vlm*/
+prompts/
+action.txt
+configs/
+
+tmp/
+models/
+
+# Common ignores
+node_modules/
+*.log
+dist/
+__pycache__/
+*.py[cod]
+venv/
+.env
+
+merged_models
+
+# Large model / weights and cache (do not commit large binaries)
+models/*.safetensors
+models/*.pt
+models/*.bin
+
+# Git LFS pointer files (if using LFS)
+*.gitattributes
+
+*.tar.gz
+*.tar
+
+scripts
